@@ -1,0 +1,14 @@
+{
+  "name": "filebasesystem",
+  "version": "1.0.0",
+  "description": "a server that stores data for a school",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pamela Abreu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
