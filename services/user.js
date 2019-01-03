@@ -1,10 +1,10 @@
 const fs = require('fs');
 
-const checkQuery = (student) => {
-    const entries = Object.entries(student);
+const checkQuery = (data) => {
+    const entries = Object.entries(data);
     let err = false;
     for (let [keyName, keyValue] of entries) {       
-        if((typeof keyValue) === 'undefined' || (typeof keyValue) === 'null'){
+        if((typeof keyValue) === 'undefined' || (typeof keyValue) === 'null' || keyValue === ''){
            err = true;
         }  
     }
@@ -71,17 +71,6 @@ const addStudent = (student) => {
         }
 }
 
-const list = (className, cb) => {
-    if(checkQuery(className)){
-        cb({
-            error: 'Please fill out all the information!',
-        })} else {
-            listClass(className, (response) => {
-                cb(response)
-            })
-        }
-}
-
 const listClass = (className, cb) => {
     const file_name = `${className}.json`;
 
@@ -98,9 +87,67 @@ const listClass = (className, cb) => {
 
 }
 
+const list = (className, cb) => {
+    if(checkQuery(className)){
+        cb({
+            error: 'Please fill out all the information!',
+        })} else {
+            listClass(className, (response) => {
+                cb(response)
+            })
+        }
+}
+
+const listClassF = (className, cb) => {
+    const file_name = `${className}.json`;
+
+    fs.readFile(`./classes/${file_name}`, 'utf8', (readErr, readData) => {
+        if(readErr){
+            cb(readErr, {
+                error: `Class ${className} doesn't exist.`
+            })
+        } else {
+            const readStudentData = JSON.parse(readData);
+            cb(readErr, readStudentData);
+        }
+    })
+
+}
+
+const listFailing = (className, cb) => {
+    if(checkQuery(className)){
+        cb({
+            error: 'Please fill out all the information!',
+        })} else {
+            listClassF(className, (err, response) => {
+
+                if(err){
+                    cb(response);
+                } else {
+                    const readStudentData = response;
+                    const studentArr = readStudentData.students;
+                    const students = [];
+
+                    for(let i=0; i<studentArr.length; i++){
+                        let dataGrade = studentArr[i].grade;
+                        if(dataGrade < 50){
+                            students.push(studentArr[i]);
+                        } 
+                    }
+
+                    cb({students})
+
+                }
+            })
+        }
+}
+
+
+
 
 
 module.exports = {
     add, 
     list,
+    listFailing,
 }

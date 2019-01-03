@@ -1,4 +1,4 @@
-const {add, list} = require('./services/user.js');
+const {add, list, listFailing} = require('./services/user.js');
 const express = require('express');
 const app = express();
 
@@ -46,16 +46,34 @@ app.get('/classlist/list', (req, res) => {
     })
 });
 
+app.get('/classlist/listfailing', (req, res) => {
+
+    const {query} = req;
+
+    const className = query['class'];
+    
+    listFailing(className, response => {
+        res.json(response)
+    })
+});
+
 app.listen(port, () => {
     console.log(`listening at port ${port}`)
 });
 
 /*
+NOTES:
+
+//checkQuery
+Add validation if user writes empty
+
 /classlist/add
 Add validation if user passes in 'Pam' or 'pam'
 Add validation if user passes invalid characters
 Add what missing information to pass if query doesn't pass all 4 data points
 
+//classlist/add & classlist/listfailing
+Refactor so both list and listfailing can use listClass
 
 */
 
