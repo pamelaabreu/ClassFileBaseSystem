@@ -3,22 +3,26 @@ const fs = require('fs');
 const checkQuery = (data) => {
     const entries = Object.entries(data);
     let err = false;
-    for (let [keyName, keyValue] of entries) {       
-        if((typeof keyValue) === 'undefined' || (typeof keyValue) === 'null' || keyValue === ''){
-           err = true;
-        }  
+    let string = '';
+
+    for (let [keyName, keyValue] of entries) {
+        if ((typeof keyValue) === 'undefined' || (typeof keyValue) === 'null' || keyValue === '') {
+            err = true;
+            string += `${keyName} `;
+        }
     }
     return err;
 }
 
 const add = (student, cb) => {
-    
-    if(checkQuery(student)){
+
+    if (checkQuery(student)) {
         cb({
             error: 'Please fill out all the information for the student!',
-        })} else {
-            cb(addStudent(student))
-        }
+        })
+    } else {
+        cb(addStudent(student));
+    }
 }
 
 const addStudent = (student) => {
@@ -30,7 +34,7 @@ const addStudent = (student) => {
     const file_name = `${className}.json`;
 
     fs.readFile(`./classes/${file_name}`, 'utf8', (readErr, readData) => {
-        if(!readData){
+        if (!readData) {
             const students = [];
             students.push({name, age, city, grade});
             fs.writeFile(`./classes/${file_name}`, JSON.stringify({students}, null, 4), (writeErr, writeRes) => {
@@ -45,37 +49,36 @@ const addStudent = (student) => {
             const readStudentData = JSON.parse(readData);
             let students = readStudentData.students;
             let toggle = 0;
-    
-            for(let i=0; i<students.length; i++){
+
+            for (let i = 0; i < students.length; i++) {
                 let dataName = students[i].name;
-                if(dataName.toLowerCase() === name.toLowerCase()){
+                if (dataName.toLowerCase() === name.toLowerCase()) {
                     toggle = 1;
                     students[i] = studentData;
                     break;
-                } 
+                }
             }
 
-            if(toggle === 0){
-                    students.push(studentData);
-                }
+            if (toggle === 0) {
+                students.push(studentData);
+            }
 
-            
             fs.writeFile(`./classes/${file_name}`, JSON.stringify({students}, null, 4), (writeErr, writeRes) => {})
-              
+
         }
     })
 
-        return {
-            'added!': studentData,
-            'class': className
-        }
+    return {
+        'added!': studentData,
+        'class': className,
+    }
 }
 
 const listClass = (className, cb) => {
     const file_name = `${className}.json`;
 
     fs.readFile(`./classes/${file_name}`, 'utf8', (readErr, readData) => {
-        if(readErr){
+        if (readErr) {
             cb({
                 error: `Class ${className} doesn't exist.`
             })
@@ -88,21 +91,22 @@ const listClass = (className, cb) => {
 }
 
 const list = (className, cb) => {
-    if(checkQuery(className)){
+    if (checkQuery(className)) {
         cb({
             error: 'Please fill out all the information!',
-        })} else {
-            listClass(className, (response) => {
-                cb(response)
-            })
-        }
+        })
+    } else {
+        listClass(className, (response) => {
+            cb(response)
+        })
+    }
 }
 
 const listClassF = (className, cb) => {
     const file_name = `${className}.json`;
 
     fs.readFile(`./classes/${file_name}`, 'utf8', (readErr, readData) => {
-        if(readErr){
+        if (readErr) {
             cb(readErr, {
                 error: `Class ${className} doesn't exist.`
             })
@@ -115,66 +119,70 @@ const listClassF = (className, cb) => {
 }
 
 const listFailing = (className, cb) => {
-    if(checkQuery(className)){
+    if (checkQuery(className)) {
         cb({
             error: 'Please fill out all the information!',
-        })} else {
-            listClassF(className, (err, response) => {
+        })
+    } else {
+        listClassF(className, (err, response) => {
 
-                if(err){
-                    cb(response);
-                } else {
-                    const readStudentData = response;
-                    const studentArr = readStudentData.students;
-                    const students = [];
+            if (err) {
+                cb(response);
+            } else {
+                const readStudentData = response;
+                const studentArr = readStudentData.students;
+                const students = [];
 
-                    for(let i=0; i<studentArr.length; i++){
-                        let dataGrade = studentArr[i].grade;
-                        if(dataGrade < 50){
-                            students.push(studentArr[i]);
-                        } 
+                for (let i = 0; i < studentArr.length; i++) {
+                    let dataGrade = studentArr[i].grade;
+                    if (dataGrade < 50) {
+                        students.push(studentArr[i]);
                     }
-
-                    cb({students})
-
                 }
-            })
-        }
+
+                cb({
+                    students
+                })
+
+            }
+        })
+    }
 }
 
 const listCity = (data, cb) => {
     const {className, city} = data;
-
-    if(checkQuery(data)){
+    if (checkQuery(data)) {
         cb({
             error: 'Please fill out all the information!',
-        })} else {
-            listClassF(className, (err, response) => {
+        })
+    } else {
+        listClassF(className, (err, response) => {
+            if (err) {
+                cb(response);
+            } else {
+                const readStudentData = response;
+                const studentArr = readStudentData.students;
+                const students = [];
 
-                if(err){
-                    cb(response);
-                } else {
-                    const readStudentData = response;
-                    const studentArr = readStudentData.students;
-                    const students = [];
-
-                    for(let i=0; i<studentArr.length; i++){
-                        let dataCity = studentArr[i].city;
-                        if(dataCity.toLowerCase() === city.toLowerCase()){
-                            students.push(studentArr[i]);
-                        } 
+                for (let i = 0; i < studentArr.length; i++) {
+                    let dataCity = studentArr[i].city;
+                    if (dataCity.toLowerCase() === city.toLowerCase()) {
+                        students.push(studentArr[i]);
                     }
-
-                    cb({students})
-
                 }
-            })
-        }
+
+                cb({
+                    students
+                })
+
+            }
+        })
+    }
 
 }
 
 module.exports = {
-    add, 
+    add,
     list,
     listFailing,
     listCity,

@@ -5,9 +5,7 @@ const app = express();
 const port = 9867; 
 
 app.get('/classlist/add', (req, res) => {
-
     const {query} = req;
-
     const {name, city, grade, age} = query;
     const className = query['class'];
     const dataQuery = {name, age, city, grade, className};
@@ -15,27 +13,9 @@ app.get('/classlist/add', (req, res) => {
     add(dataQuery, response => {
         res.json(response)
     })
-    
-   
-/*
-    save(className, {name, age, city, grade}, (err, data) => {
-        if (err) {
-            res.status(500)
-            res.json({
-                'message': "something went wrong!",
-                "err": err,
-            });
-            return;
-        }
-
-        res.json(data);
-    })*/
-    
-
 });
 
 app.get('/classlist/list', (req, res) => {
-
     const {query} = req;
     const className = query['class'];
     
@@ -46,7 +26,6 @@ app.get('/classlist/list', (req, res) => {
 });
 
 app.get('/classlist/listfailing', (req, res) => {
-
     const {query} = req;
     const className = query['class'];
     
@@ -56,7 +35,6 @@ app.get('/classlist/listfailing', (req, res) => {
 });
 
 app.get('/classlist/listfromcity', (req, res) => {
-
     const {query} = req;
     const {city} = query
     const className = query['class'];
@@ -77,12 +55,13 @@ NOTES:
 Add validation if user writes empty -> make sure obj is being passed
 
 /classlist/add
-Add validation if user passes in 'Pam' or 'pam'
 Add validation if user passes invalid characters
 Add what missing information to pass if query doesn't pass all 4 data points
 
 //classlist/add & classlist/listfailing
-Refactor so both list and listfailing can use listClass
+Refactor so both list, listfailing, and listCity can use listClass
+
+//Refactor the write file
 
 */
 
