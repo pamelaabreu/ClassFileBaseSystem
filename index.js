@@ -1,4 +1,4 @@
-const {add, list, listFailing} = require('./services/user.js');
+const {add, list, listFailing, listCity} = require('./services/user.js');
 const express = require('express');
 const app = express();
 
@@ -37,7 +37,6 @@ app.get('/classlist/add', (req, res) => {
 app.get('/classlist/list', (req, res) => {
 
     const {query} = req;
-
     const className = query['class'];
     
 
@@ -49,10 +48,20 @@ app.get('/classlist/list', (req, res) => {
 app.get('/classlist/listfailing', (req, res) => {
 
     const {query} = req;
-
     const className = query['class'];
     
     listFailing(className, response => {
+        res.json(response)
+    })
+});
+
+app.get('/classlist/listfromcity', (req, res) => {
+
+    const {query} = req;
+    const {city} = query
+    const className = query['class'];
+    
+    listCity({className, city}, response => {
         res.json(response)
     })
 });
@@ -65,7 +74,7 @@ app.listen(port, () => {
 NOTES:
 
 //checkQuery
-Add validation if user writes empty
+Add validation if user writes empty -> make sure obj is being passed
 
 /classlist/add
 Add validation if user passes in 'Pam' or 'pam'

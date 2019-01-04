@@ -48,7 +48,7 @@ const addStudent = (student) => {
     
             for(let i=0; i<students.length; i++){
                 let dataName = students[i].name;
-                if(dataName === name){
+                if(dataName.toLowerCase() === name.toLowerCase()){
                     toggle = 1;
                     students[i] = studentData;
                     break;
@@ -142,12 +142,40 @@ const listFailing = (className, cb) => {
         }
 }
 
+const listCity = (data, cb) => {
+    const {className, city} = data;
 
+    if(checkQuery(data)){
+        cb({
+            error: 'Please fill out all the information!',
+        })} else {
+            listClassF(className, (err, response) => {
 
+                if(err){
+                    cb(response);
+                } else {
+                    const readStudentData = response;
+                    const studentArr = readStudentData.students;
+                    const students = [];
 
+                    for(let i=0; i<studentArr.length; i++){
+                        let dataCity = studentArr[i].city;
+                        if(dataCity.toLowerCase() === city.toLowerCase()){
+                            students.push(studentArr[i]);
+                        } 
+                    }
+
+                    cb({students})
+
+                }
+            })
+        }
+
+}
 
 module.exports = {
     add, 
     list,
     listFailing,
+    listCity,
 }
